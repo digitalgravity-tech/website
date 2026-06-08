@@ -1,0 +1,244 @@
+/* =========================================================
+   DIGITAL GRAVITY — DESIGN TOKENS
+   v1 paleta — verde fósforo único, neutros profundos.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap');
+
+:root {
+  /* ---------------------------------------------------------
+     COR / NEUTROS — esqueleto (90–95% das peças)
+  --------------------------------------------------------- */
+  --void: #0A0A0A;       /* fundo principal (dark default) */
+  --void-2: #141414;     /* blocos elevados, cards */
+  --void-3: #1C1C1C;     /* blocos secundários */
+  --grain-1: #2A2A2A;    /* bordas sutis, divisores */
+  --grain-2: #404040;    /* bordas funcionais */
+  --grain-3: #5C5C5C;    /* texto desabilitado, placeholders */
+  --grain-4: #808080;    /* texto auxiliar, metadata */
+  --grain-5: #A8A8A8;    /* texto secundário, descrições */
+  --grain-6: #D0D0D0;    /* texto principal sobre fundo escuro */
+  --paper: #FAFAF7;      /* fundo claro principal (modo claro) */
+  --paper-2: #F0F0EC;    /* fundo claro secundário */
+
+  /* NUNCA USAR: #FFFFFF puro, #000000 puro. */
+
+  /* ---------------------------------------------------------
+     COR / SINAL — verde fósforo (1–3% das peças)
+  --------------------------------------------------------- */
+  --signal: #00FF66;
+  --signal-dim: #00B248; /* modo claro / hovers secundários */
+
+  /* ---------------------------------------------------------
+     COR / AVISO — laranja sinal (<1% das peças)
+  --------------------------------------------------------- */
+  --warning: #FF6B1A;
+
+  /* ---------------------------------------------------------
+     SEMÂNTICA — cor por função
+  --------------------------------------------------------- */
+  --bg: var(--void);
+  --bg-elev: var(--void-2);
+  --bg-elev-2: var(--void-3);
+  --fg: var(--grain-6);          /* texto principal em dark */
+  --fg-2: var(--grain-5);        /* texto secundário */
+  --fg-3: var(--grain-4);        /* metadata, eyebrow */
+  --fg-4: var(--grain-3);        /* desabilitado */
+  --border: var(--grain-1);
+  --border-strong: var(--grain-2);
+  --accent: var(--signal);
+  --accent-dim: var(--signal-dim);
+  --critical: var(--warning);
+
+  /* ---------------------------------------------------------
+     TIPOGRAFIA / FAMÍLIAS
+  --------------------------------------------------------- */
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+
+  /* ---------------------------------------------------------
+     ESPAÇAMENTO — múltiplos de 8px
+  --------------------------------------------------------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-30: 120px;
+
+  /* ---------------------------------------------------------
+     GRID
+  --------------------------------------------------------- */
+  --container-max: 1280px;
+  --container-padding: 32px;
+  --metadata-col: 80px;
+  --grid-gap: 24px;
+
+  /* ---------------------------------------------------------
+     BORDAS — sistema é INTEGRALMENTE reto
+  --------------------------------------------------------- */
+  --border-w: 1px;
+  --border-w-em: 2px;
+  --radius: 0;             /* nunca arredondar */
+
+  /* ---------------------------------------------------------
+     MOVIMENTO
+  --------------------------------------------------------- */
+  --t-fast: 150ms ease;
+  --t-enter: 600ms ease-out;
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================================================
+   TIPOGRAFIA SEMÂNTICA — escala canônica
+========================================================= */
+
+/* Display H1 — uma vez por página */
+.t-h1, h1.t-h1 {
+  font-family: var(--sans);
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--fg);
+}
+
+/* Display H2 */
+.t-h2, h2.t-h2 {
+  font-family: var(--sans);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.10;
+  letter-spacing: -0.020em;
+}
+
+/* Subhead H3 */
+.t-h3, h3.t-h3 {
+  font-family: var(--sans);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.20;
+  letter-spacing: -0.010em;
+}
+
+/* Subhead H4 */
+.t-h4, h4.t-h4 {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.30;
+  letter-spacing: -0.010em;
+}
+
+/* Body */
+.t-body, p.t-body {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.60;
+}
+
+.t-body-sm {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.60;
+}
+
+/* Editorial — apenas momentos editoriais (citações, manifesto) */
+.t-editorial {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.50;
+  color: var(--fg);
+}
+
+.t-editorial-body {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--fg);
+}
+
+/* Mono / Sinal técnico */
+.t-mono {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.50;
+  letter-spacing: 0.05em;
+}
+
+.t-mono-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.50;
+  letter-spacing: 0.15em;
+}
+
+/* Eyebrow — UPPERCASE com tracking generoso */
+.t-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.40;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.t-eyebrow-sm {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.40;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* =========================================================
+   ELEMENTOS — defaults sem classe
+========================================================= */
+h1 { font: 600 clamp(32px, 5vw, 64px)/1.05 var(--sans); letter-spacing: -0.025em; margin: 0; }
+h2 { font: 600 40px/1.10 var(--sans); letter-spacing: -0.020em; margin: 0; }
+h3 { font: 500 24px/1.20 var(--sans); letter-spacing: -0.010em; margin: 0; }
+h4 { font: 500 18px/1.30 var(--sans); letter-spacing: -0.010em; margin: 0; }
+p  { margin: 0 0 16px 0; }
+code, kbd, samp, pre { font-family: var(--mono); font-size: 13px; }
+hr { border: 0; border-top: 1px solid var(--border); margin: var(--space-8) 0; }
+a  { color: var(--fg); text-decoration: none; transition: color var(--t-fast); }
+a:hover { color: var(--accent); }
+
+/* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

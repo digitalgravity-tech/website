@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- This page is authored dark — tell client-side dark-mode engines to leave it alone. -->
+<meta name="color-scheme" content="dark">
+<meta name="darkreader-lock">
+<title>Digital Gravity — Engenharia pós-IA</title>
+<meta name="description" content="Transformamos IA experimental em sistema operacionalmente confiável. Do problema à produção — e deixamos seu time capaz de manter o que construímos.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<!-- Google tag (gtag.js) — GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PPGNCL3RDQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PPGNCL3RDQ');
+</script>
+<script>
+// Defensive: neutralize injected dark-reader ("noir") styling so the authored
+// palette renders as designed (it inverts dark text — e.g. the primary button —
+// to light, breaking contrast on the signal-green fill). Bounded so we never war
+// with the engine indefinitely.
+(function () {
+  function strip() {
+    document.querySelectorAll('style[class*="noir"], style[id*="noir"]').forEach(function (s) { s.remove(); });
+    [document.documentElement, document.body].forEach(function (el) {
+      if (!el) return;
+      if (el.className && /noir/.test(el.className)) el.className = el.className.replace(/\bnoir\S*/g, '').trim();
+      if (el.style) for (var i = el.style.length - 1; i >= 0; i--) { var p = el.style[i]; if (p.indexOf('--noir') === 0) el.style.removeProperty(p); }
+    });
+  }
+  strip();
+  var obs = new MutationObserver(strip);
+  obs.observe(document.documentElement, { childList: true, subtree: true });
+  [0, 80, 250, 600, 1200].forEach(function (t) { setTimeout(strip, t); });
+  setTimeout(function () { obs.disconnect(); }, 4000);
+  document.addEventListener('DOMContentLoaded', strip);
+})();
+</script>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  @keyframes dg-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--void); color: var(--fg); overflow-x: hidden; }
+  ::selection { background: var(--signal); color: var(--void); }
+
+  .dg-container { max-width: var(--container-max); margin: 0 auto; padding: 0 var(--container-padding); width: 100%; }
+
+  /* ── signal dot ─────────────────────────────────────────── */
+  .dg-dot { display: inline-block; background: var(--signal); box-shadow: 0 0 8px var(--signal);
+            animation: dg-pulse 2s ease-in-out infinite; vertical-align: middle; margin-right: 8px; }
+
+  .dg-accent { color: var(--signal); }
+  .dg-accent-soft { color: var(--grain-6); }
+  [data-accent="generous"] .dg-accent-soft { color: var(--signal); }
+
+  /* ── buttons ───────────────────────────────────────────── */
+  .dg-btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono);
+            font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.12em;
+            padding: 14px 22px; border: 1px solid var(--grain-3); background: transparent;
+            color: var(--paper); cursor: pointer; transition: all var(--t-fast); text-decoration: none; white-space: nowrap; }
+  .dg-btn:hover { border-color: var(--signal); color: var(--signal); }
+  .dg-btn--primary { background: var(--signal); color: var(--void); border-color: var(--signal); }
+  .dg-btn--primary:hover { background: transparent; color: var(--signal); }
+  .dg-btn--secondary:hover { color: var(--signal); }
+
+  /* ── tags ──────────────────────────────────────────────── */
+  .dg-tag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono);
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; padding: 6px 10px;
+            border: 1px solid var(--grain-2); color: var(--grain-5); }
+  .dg-tag--signal { border-color: var(--signal-dim); color: var(--signal); }
+
+  /* ── nav ───────────────────────────────────────────────── */
+  .dg-nav { position: sticky; top: 0; z-index: 20; display: flex; align-items: center;
+            justify-content: space-between; padding: 16px var(--container-padding);
+            border-bottom: 1px solid transparent; transition: border-color var(--t-fast), background var(--t-fast); }
+  .dg-nav.is-scrolled { border-bottom-color: var(--grain-1); background: rgba(10,10,10,0.85);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .dg-nav__brand { display: flex; align-items: center; gap: 12px; }
+  .dg-nav__mark { display: block; }
+  .dg-nav__word { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.22em; color: var(--paper); white-space: nowrap; }
+  .dg-nav__menu { display: flex; align-items: center; gap: 30px; }
+  .dg-nav__link { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grain-5); white-space: nowrap; }
+  .dg-nav__link:hover { color: var(--signal); }
+  .dg-nav__link--cta { color: var(--paper); }
+  .dg-nav__link--cta:hover { color: var(--signal); }
+
+  /* ── reveal ────────────────────────────────────────────── */
+  [data-reveal] { opacity: 0; transform: translateY(8px); transition: opacity 600ms ease-out, transform 600ms ease-out; }
+  [data-reveal][data-shown] { opacity: 1; transform: none; }
+  html.dg-instant [data-reveal] { transition: none !important; }
+  @media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; } }
+
+  /* ── hero ──────────────────────────────────────────────── */
+  .dg-hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--grain-1);
+             min-height: 88vh; display: flex; align-items: center; }
+  .dg-hero__veil { position: absolute; inset: 0; pointer-events: none;
+             background: radial-gradient(120% 90% at 70% 30%, transparent 30%, var(--void) 88%); }
+  .dg-hero__inner { position: relative; z-index: 1; padding: 140px 0 120px; }
+  .dg-hero__body { max-width: 940px; }
+  .dg-eyebrow { font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+             letter-spacing: 0.18em; color: var(--grain-4); margin-bottom: 28px; }
+  .dg-hero__title { font-family: var(--sans); font-size: clamp(34px, 5.4vw, 64px); font-weight: 600;
+             line-height: 1.04; letter-spacing: -0.025em; color: var(--paper); margin: 0 0 28px; max-width: 16ch; text-wrap: balance; }
+  .dg-hero__sub { font-family: var(--sans); font-size: clamp(16px, 1.6vw, 19px); color: var(--grain-5);
+             line-height: 1.55; max-width: 540px; margin: 0 0 40px; }
+  .dg-hero__cta { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* ── generic section ───────────────────────────────────── */
+  .dg-section { padding: 112px 0; border-bottom: 1px solid var(--grain-1); position: relative; }
+  .dg-rail { display: flex; align-items: baseline; gap: 16px; margin-bottom: 48px; }
+  .dg-rail__num { font-family: var(--mono); font-size: 12px; color: var(--grain-4); letter-spacing: 0.1em; }
+  [data-accent="generous"] .dg-rail__num { color: var(--signal); }
+  .dg-rail__label { font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+             letter-spacing: 0.18em; color: var(--grain-5); }
+  .dg-h2 { font-family: var(--sans); font-size: clamp(26px, 3.2vw, 40px); font-weight: 600;
+             line-height: 1.1; letter-spacing: -0.02em; color: var(--paper); margin: 0 0 56px; max-width: 22ch; text-wrap: balance; }
+
+  /* ── problem ───────────────────────────────────────────── */
+  .dg-problem__grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; align-items: start; }
+  .dg-punch { font-family: var(--sans); font-size: clamp(30px, 4.4vw, 52px); font-weight: 600;
+             line-height: 1.05; letter-spacing: -0.025em; color: var(--paper); margin: 0; }
+  .dg-problem__col { padding-top: 8px; }
+  .dg-lede { font-family: var(--sans); font-size: clamp(16px, 1.5vw, 18px); color: var(--grain-5);
+             line-height: 1.6; margin: 0 0 36px; }
+  .dg-thesis { margin: 0; padding-left: 24px; border-left: 2px solid var(--signal-dim); }
+  .dg-thesis p { font-family: var(--sans); font-size: clamp(19px, 2vw, 24px); font-weight: 500;
+             line-height: 1.3; letter-spacing: -0.01em; color: var(--grain-6); margin: 0 0 4px; text-wrap: balance; }
+
+  /* ── journey ───────────────────────────────────────────── */
+  .dg-journey__set.is-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+             background: var(--grain-1); border: 1px solid var(--grain-1); }
+  .dg-step--card { background: var(--void-2); padding: 32px; display: flex; flex-direction: column;
+             gap: 18px; min-height: 320px; transition: background var(--t-fast); }
+  .dg-step--card:hover { background: var(--void-3); }
+  .dg-step--card .dg-step__num { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; color: var(--grain-4); }
+  [data-accent="generous"] .dg-step__num { color: var(--signal); }
+  .dg-step--card .dg-step__head { margin-top: auto; }
+  .dg-step__name { font-family: var(--sans); font-size: 24px; font-weight: 600; letter-spacing: -0.015em;
+             color: var(--paper); margin: 0 0 10px; line-height: 1.15; }
+  .dg-step__tag { font-family: var(--mono); font-size: 10px; text-transform: uppercase;
+             letter-spacing: 0.15em; color: var(--signal); }
+  .dg-step__body { font-family: var(--sans); font-size: 15px; line-height: 1.6; color: var(--grain-5); margin: 14px 0 0; }
+
+  /* journey — rows variant */
+  .dg-journey__set.is-rows { display: flex; flex-direction: column; border-top: 1px solid var(--grain-1); }
+  .dg-step--row { display: grid; grid-template-columns: 80px 1fr; gap: 24px; align-items: start;
+             padding: 36px 0; border-bottom: 1px solid var(--grain-1); transition: padding-left var(--t-fast); }
+  .dg-step--row:hover { padding-left: 8px; }
+  .dg-step--row .dg-step__num { font-family: var(--mono); font-size: 28px; font-weight: 400; color: var(--grain-3); line-height: 1; }
+  [data-accent="generous"] .dg-step--row .dg-step__num { color: var(--signal); }
+  .dg-step--row .dg-step__head { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .dg-step--row .dg-step__name { margin: 0; }
+  .dg-step--row .dg-step__body { margin: 0; max-width: 720px; font-size: 16px; }
+
+  /* ── posture ───────────────────────────────────────────── */
+  .dg-posture__grid { display: grid; grid-template-columns: var(--metadata-col) 1fr; gap: var(--grid-gap); }
+  .dg-statement { grid-column: 2; font-family: var(--serif); font-size: clamp(22px, 2.6vw, 30px);
+             line-height: 1.5; color: var(--grain-6); margin: 0; max-width: 22ch; max-width: 880px; }
+
+  /* ── closing ───────────────────────────────────────────── */
+  .dg-closing { overflow: hidden; text-align: center; padding: 132px 0; }
+  .dg-closing__veil { position: absolute; inset: 0; pointer-events: none;
+             background: radial-gradient(90% 120% at 50% 50%, transparent 20%, var(--void) 80%); }
+  .dg-closing__inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 48px; }
+  .dg-closing__q { font-family: var(--sans); font-size: clamp(30px, 4.6vw, 56px); font-weight: 600;
+             line-height: 1.05; letter-spacing: -0.025em; color: var(--paper); margin: 0; max-width: 18ch; text-wrap: balance; }
+  .dg-closing__cta { justify-content: center; }
+
+  /* ── footer ────────────────────────────────────────────── */
+  .dg-footer { padding: 72px 0 80px; }
+  .dg-footer__grid { display: flex; align-items: flex-start; justify-content: space-between; gap: 40px; flex-wrap: wrap; padding-bottom: 48px; border-bottom: 1px solid var(--grain-1); }
+  .dg-footer__brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .dg-footer__word { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.22em; color: var(--paper); }
+  .dg-footer__tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--grain-4); padding-left: 14px; border-left: 1px solid var(--grain-2); }
+  .dg-footer__links { display: flex; gap: 28px; flex-wrap: wrap; }
+  .dg-footer__links a { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: var(--grain-5); }
+  .dg-footer__links a:hover { color: var(--signal); }
+  .dg-footer__base { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-top: 28px; }
+  .dg-footer__base span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--grain-4); }
+  .dg-footer__motto { font-family: var(--serif) !important; font-style: italic; font-size: 14px !important; letter-spacing: 0 !important; color: var(--grain-5) !important; }
+
+  /* ── responsive ────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .dg-posture__grid { grid-template-columns: 1fr; }
+    .dg-statement { grid-column: 1; }
+    .dg-problem__grid { grid-template-columns: 1fr; gap: 36px; }
+    .dg-journey__set.is-cards { grid-template-columns: 1fr; }
+    .dg-step--card { min-height: 0; }
+    .dg-br { display: none; }
+  }
+  @media (max-width: 680px) {
+    .dg-nav__menu { gap: 18px; }
+    .dg-nav__link:not(.dg-nav__link--cta) { display: none; }
+  }
+  @media (max-width: 560px) {
+    .dg-section { padding: 80px 0; }
+    .dg-hero__inner { padding: 112px 0 88px; }
+    .dg-btn { width: 100%; justify-content: center; white-space: normal; text-align: center; }
+  }
+</style>
+</head>
+<body data-accent="restrained">
+
+<!-- ── Nav ─────────────────────────────────────────────────── -->
+<nav class="dg-nav">
+  <a class="dg-nav__brand" href="#topo" aria-label="Digital Gravity — início">
+    <img src="assets/logo-mark.svg" width="26" height="26" alt="" aria-hidden="true" class="dg-nav__mark">
+    <span class="dg-nav__word">DIGITAL GRAVITY</span>
+  </a>
+  <div class="dg-nav__menu">
+    <a class="dg-nav__link" href="#problema">Problema</a>
+    <a class="dg-nav__link" href="#jornada">Jornada</a>
+    <a class="dg-nav__link" href="#postura">Postura</a>
+    <a class="dg-nav__link dg-nav__link--cta" href="#contato">Contato</a>
+  </div>
+</nav>
+
+<main>
+  <!-- ── 4.1 Hero ──────────────────────────────────────────── -->
+  <header class="dg-hero" id="topo">
+    <canvas class="dg-chladni" data-density="760" data-opacity="0.42"
+            style="position:absolute;inset:0;opacity:0.42;pointer-events:none;width:100%;height:100%"></canvas>
+    <div class="dg-hero__veil"></div>
+    <div class="dg-container dg-hero__inner">
+      <div class="dg-hero__body">
+        <div class="dg-eyebrow" data-reveal>— ENGENHARIA PÓS-IA</div>
+        <h1 class="dg-hero__title" data-reveal>
+          Transformamos IA experimental em sistema <span class="dg-accent">operacionalmente confiável.</span>
+        </h1>
+        <p class="dg-hero__sub" data-reveal>
+          Do problema à produção. E deixamos seu time capaz de manter o que construímos.
+        </p>
+        <div class="dg-hero__cta" data-reveal>
+          <a class="dg-btn dg-btn--primary" role="button">Rode nosso checklist de confiabilidade</a>
+          <a class="dg-btn dg-btn--secondary" role="button" href="#contato">Fale com a gente →</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── 4.2 O problema ────────────────────────────────────── -->
+  <section class="dg-section dg-problem" id="problema">
+    <div class="dg-container">
+      <div class="dg-rail">
+        <span class="dg-rail__num">/ 01</span>
+        <span class="dg-rail__label">O PROBLEMA</span>
+      </div>
+      <div class="dg-problem__grid">
+        <h2 class="dg-punch" data-reveal>
+          IA que brilha na demo <br class="dg-br">e morre em produção.
+        </h2>
+        <div class="dg-problem__col">
+          <p class="dg-lede" data-reveal>
+            O problema raramente é o modelo — é a ausência de engenharia em volta dele:
+            sem eval, sem observabilidade, sem controle do não-determinismo.
+          </p>
+          <blockquote class="dg-thesis" data-reveal>
+            <p>A maioria dos projetos de IA não falha por falta de inteligência.</p>
+            <p><span class="dg-accent">Falha por falta de engenharia.</span></p>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4.3 O que fazemos (a jornada) ─────────────────────── -->
+  <section class="dg-section dg-journey" id="jornada">
+    <div class="dg-container">
+      <div class="dg-rail">
+        <span class="dg-rail__num">/ 02</span>
+        <span class="dg-rail__label">O QUE FAZEMOS</span>
+      </div>
+      <h2 class="dg-h2" data-reveal>A jornada inteira — projeto novo ou existente.</h2>
+      <div class="dg-journey__set is-cards">
+        <article class="dg-step dg-step--card" data-reveal style="transition-delay:0ms">
+          <div class="dg-step__num">01</div>
+          <div class="dg-step__main">
+            <div class="dg-step__head">
+              <h3 class="dg-step__name">Shape</h3>
+              <span class="dg-step__tag">ANTES DO CÓDIGO</span>
+            </div>
+            <p class="dg-step__body">Definir problema, outcome e critério de sucesso como engenharia — antes da primeira linha de código.</p>
+          </div>
+        </article>
+        <article class="dg-step dg-step--card" data-reveal style="transition-delay:80ms">
+          <div class="dg-step__num">02</div>
+          <div class="dg-step__main">
+            <div class="dg-step__head">
+              <h3 class="dg-step__name">Build / Harden</h3>
+              <span class="dg-step__tag">DEMO → PRODUÇÃO</span>
+            </div>
+            <p class="dg-step__body">Eval, observabilidade, controle do não-determinismo: o que transforma a demo em produção confiável.</p>
+          </div>
+        </article>
+        <article class="dg-step dg-step--card" data-reveal style="transition-delay:160ms">
+          <div class="dg-step__num">03</div>
+          <div class="dg-step__main">
+            <div class="dg-step__head">
+              <h3 class="dg-step__name">Operate / Transfer</h3>
+              <span class="dg-step__tag">VOCÊ FICA DONO</span>
+            </div>
+            <p class="dg-step__body">Operação assistida e transferência de capacidade. Você fica dono do que construímos.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4.4 A postura ─────────────────────────────────────── -->
+  <section class="dg-section dg-posture" id="postura">
+    <div class="dg-container">
+      <div class="dg-rail">
+        <span class="dg-rail__num">/ 03</span>
+        <span class="dg-rail__label">A POSTURA</span>
+      </div>
+      <div class="dg-posture__grid">
+        <p class="dg-statement" data-reveal>
+          Não vendemos estratégia de IA em PDF nem mais um framework. Fazemos engenharia —
+          e somos honestos sobre seus limites. <span class="dg-accent-soft">Rigor onde há base sólida, humildade onde há fronteira.</span> O que não dominamos, não fingimos dominar.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 4.5 Fechamento / CTA ──────────────────────────────── -->
+  <section class="dg-section dg-closing" id="contato">
+    <canvas class="dg-chladni" data-density="420" data-opacity="0.16"
+            style="position:absolute;inset:0;opacity:0.16;pointer-events:none;width:100%;height:100%"></canvas>
+    <div class="dg-closing__veil"></div>
+    <div class="dg-container dg-closing__inner">
+      <h2 class="dg-closing__q" data-reveal>
+        Seu projeto de IA está <span class="dg-accent">pronto para produção?</span>
+      </h2>
+      <div class="dg-hero__cta dg-closing__cta" data-reveal>
+        <a class="dg-btn dg-btn--primary" role="button">Rode nosso checklist de confiabilidade</a>
+        <a class="dg-btn dg-btn--secondary" role="button" href="mailto:contato@digitalgravity.tech">Fale com a gente →</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ── 4.6 Rodapé ──────────────────────────────────────────── -->
+<footer class="dg-footer">
+  <div class="dg-container">
+    <div class="dg-footer__grid">
+      <div class="dg-footer__brand">
+        <img src="assets/logo-mark.svg" width="22" height="22" alt="" aria-hidden="true">
+        <span class="dg-footer__word">DIGITAL GRAVITY</span>
+        <span class="dg-footer__tag">ENGENHARIA PÓS-IA</span>
+      </div>
+      <div class="dg-footer__links">
+        <a href="mailto:contato@digitalgravity.tech">contato@digitalgravity.tech</a>
+        <a href="https://linkedin.com/company/digitalgravity-tech" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+    </div>
+    <div class="dg-footer__base">
+      <span>© 2026 Digital Gravity</span>
+      <span class="dg-footer__motto">Solidez no conhecido. Humildade no desconhecido.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ── Sticky nav: solidify after a short scroll ──────────────
+  var nav = document.querySelector('.dg-nav');
+  if (nav) {
+    var onScroll = function () { nav.classList.toggle('is-scrolled', window.scrollY > 8); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // ── Reveal-on-scroll: fade + 8px rise ──────────────────────
+  // Base state is hidden via CSS; snap everything visible (no animation)
+  // for reduced-motion, no IntersectionObserver, or a backgrounded tab —
+  // contexts where CSS transitions never advance and would freeze content.
+  var els = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+  if (reduce || !('IntersectionObserver' in window) || document.hidden) {
+    document.documentElement.classList.add('dg-instant');
+    els.forEach(function (e) { e.setAttribute('data-shown', ''); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.setAttribute('data-shown', ''); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (e) { io.observe(e); });
+  }
+
+  // ── Chladni field ──────────────────────────────────────────
+  // Particles auto-organizing on a vibrating plate — a phenomenal
+  // demonstration of "order from engineering," not ambient decoration.
+  function startChladni(canvas) {
+    var density = parseInt(canvas.getAttribute('data-density'), 10) || 0;
+    if (!density) return;
+    var ctx = canvas.getContext('2d');
+    var particles = [], w, h, time = 0, raf;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function resize() {
+      w = canvas.width = canvas.offsetWidth * dpr;
+      h = canvas.height = canvas.offsetHeight * dpr;
+    }
+    function init() {
+      resize();
+      particles = [];
+      for (var i = 0; i < density; i++) particles.push({ x: Math.random() * w, y: Math.random() * h });
+    }
+    function chladni(x, y, m, n) {
+      var px = x / w, py = y / h;
+      return Math.sin(Math.PI * m * px) * Math.sin(Math.PI * n * py) - Math.sin(Math.PI * n * px) * Math.sin(Math.PI * m * py);
+    }
+    function draw() {
+      ctx.fillStyle = 'rgba(10,10,10,0.20)';
+      ctx.fillRect(0, 0, w, h);
+      time += reduce ? 0 : 0.0026;
+      var m = 2 + Math.sin(time * 0.4) * 0.8;
+      var n = 3 + Math.cos(time * 0.3) * 0.8;
+      particles.forEach(function (p) {
+        var v = chladni(p.x, p.y, m, n);
+        var amp = Math.abs(v);
+        var step = amp * 1.4;
+        var a = Math.random() * Math.PI * 2;
+        if (!reduce) { p.x += Math.cos(a) * step; p.y += Math.sin(a) * step; }
+        if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
+        if (amp < 0.075) { ctx.fillStyle = 'rgba(0,255,102,0.5)'; ctx.fillRect(p.x, p.y, 1.2 * dpr, 1.2 * dpr); }
+        else { ctx.fillStyle = 'rgba(168,168,168,' + ((1 - amp) * 0.22) + ')'; ctx.fillRect(p.x, p.y, dpr, dpr); }
+      });
+      raf = requestAnimationFrame(draw);
+    }
+    init();
+    window.addEventListener('resize', init);
+    draw();
+  }
+  document.querySelectorAll('.dg-chladni').forEach(startChladni);
+})();
+</script>
+</body>
+</html>
