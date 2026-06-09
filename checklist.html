@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="darkreader-lock">
+<title>Checklist de confiabilidade — Digital Gravity</title>
+<meta name="description" content="Oito perguntas, dois minutos. Descubra onde seu sistema de IA está entre a demo e a produção — e onde estão as lacunas de confiabilidade.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<!-- Open Graph / social preview -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Seu sistema de IA está pronto para produção?">
+<meta property="og:description" content="Checklist de confiabilidade da Digital Gravity — 8 perguntas, 2 minutos, diagnóstico na hora.">
+<meta property="og:url" content="https://digitalgravity.tech/checklist.html">
+<meta name="twitter:card" content="summary">
+<!-- Google tag (gtag.js) — GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PPGNCL3RDQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PPGNCL3RDQ');
+</script>
+<script>
+// Defensive: neutralize injected dark-reader ("noir") styling so the authored
+// palette renders as designed (matches index.html).
+(function () {
+  function strip() {
+    document.querySelectorAll('style[class*="noir"], style[id*="noir"]').forEach(function (s) { s.remove(); });
+    [document.documentElement, document.body].forEach(function (el) {
+      if (!el) return;
+      if (el.className && /noir/.test(el.className)) el.className = el.className.replace(/\bnoir\S*/g, '').trim();
+      if (el.style) for (var i = el.style.length - 1; i >= 0; i--) { var p = el.style[i]; if (p.indexOf('--noir') === 0) el.style.removeProperty(p); }
+    });
+  }
+  strip();
+  var obs = new MutationObserver(strip);
+  obs.observe(document.documentElement, { childList: true, subtree: true });
+  [0, 80, 250, 600, 1200].forEach(function (t) { setTimeout(strip, t); });
+  setTimeout(function () { obs.disconnect(); }, 4000);
+  document.addEventListener('DOMContentLoaded', strip);
+})();
+</script>
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  @keyframes dg-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--void); color: var(--fg); overflow-x: hidden; }
+  ::selection { background: var(--signal); color: var(--void); }
+
+  /* functional diagnostic semantics (data-viz only) */
+  :root { --danger: #FF5C5C; }
+
+  .ck-wrap { max-width: 720px; margin: 0 auto; padding: 0 var(--container-padding); width: 100%; }
+
+  /* ── buttons (from index.html design system) ─────────────── */
+  .dg-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--mono);
+            font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.12em;
+            padding: 14px 22px; border: 1px solid var(--grain-3); background: transparent;
+            color: var(--paper); cursor: pointer; transition: all var(--t-fast); text-decoration: none; white-space: nowrap; }
+  .dg-btn:hover { border-color: var(--signal); color: var(--signal); }
+  .dg-btn--primary { background: var(--signal); color: var(--void); border-color: var(--signal); }
+  .dg-btn--primary:hover { background: transparent; color: var(--signal); }
+  .dg-btn--secondary:hover { color: var(--signal); }
+
+  /* ── header ──────────────────────────────────────────────── */
+  .ck-head { display: flex; align-items: center; justify-content: space-between;
+             padding: 16px 0; border-bottom: 1px solid var(--grain-1); }
+  .ck-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .ck-brand__word { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: 0.22em; color: var(--paper); }
+  .ck-head__link { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--grain-5); text-decoration: none; }
+  .ck-head__link:hover { color: var(--signal); }
+
+  /* ── intro ───────────────────────────────────────────────── */
+  .ck-intro { padding: 64px 0 30px; }
+  .ck-kicker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--signal); margin-bottom: 20px; }
+  .ck-h1 { font-family: var(--sans); font-weight: 600; font-size: clamp(30px, 5vw, 44px);
+           line-height: 1.08; letter-spacing: -0.025em; color: var(--paper); text-wrap: balance; }
+  .ck-lede { font-family: var(--sans); color: var(--grain-5); font-size: 18px; line-height: 1.55; margin-top: 18px; max-width: 52ch; }
+  .ck-lede b { color: var(--grain-6); font-weight: 500; }
+
+  /* ── questions ───────────────────────────────────────────── */
+  .ck-q { padding: 26px 0; border-top: 1px solid var(--grain-1); }
+  .ck-q__dim { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--grain-4); margin-bottom: 12px; }
+  .ck-q__text { font-family: var(--sans); font-size: 18px; line-height: 1.45; color: var(--grain-6); margin-bottom: 18px; }
+  .ck-opts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .ck-opt { font-family: var(--mono); font-size: 12px; text-align: center; padding: 12px 4px;
+            border: 1px solid var(--grain-2); color: var(--grain-5); cursor: pointer;
+            transition: all var(--t-fast); user-select: none; line-height: 1.3; }
+  .ck-opt:hover { border-color: var(--grain-3); color: var(--grain-6); }
+  .ck-opt:active { transform: scale(0.97); }
+  .ck-opt.on { background: rgba(0,255,102,0.10); border-color: var(--signal); color: var(--signal); }
+
+  /* ── run bar ─────────────────────────────────────────────── */
+  .ck-runbar { position: sticky; bottom: 0; background: linear-gradient(180deg, transparent, var(--void) 45%);
+               padding: 20px 0 28px; margin-top: 10px; }
+  .ck-run { width: 100%; }
+  .ck-run:disabled { opacity: 0.35; cursor: default; border-color: var(--grain-3); background: var(--grain-2); color: var(--grain-4); }
+  .ck-run:disabled:hover { background: var(--grain-2); color: var(--grain-4); border-color: var(--grain-3); }
+  .ck-prog { font-family: var(--mono); font-size: 11px; color: var(--grain-4); text-align: center; margin-top: 12px; letter-spacing: 0.08em; }
+
+  /* ── result ──────────────────────────────────────────────── */
+  #ck-result { display: none; padding: 40px 0 96px; }
+  .ck-band { font-family: var(--sans); font-weight: 600; font-size: clamp(26px, 4.5vw, 38px); line-height: 1.15; letter-spacing: -0.02em; margin: 8px 0 6px; }
+  .ck-scoreline { font-family: var(--mono); font-size: 13px; color: var(--grain-5); margin-bottom: 28px; letter-spacing: 0.04em; }
+  .ck-verdict { font-family: var(--sans); font-size: 18px; color: var(--grain-6); max-width: 54ch; margin-bottom: 32px; line-height: 1.55; }
+  .ck-bars { border-top: 1px solid var(--grain-1); padding-top: 24px; }
+  .ck-bar { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 9px 0; }
+  .ck-bar__lab { font-family: var(--mono); font-size: 13px; color: var(--grain-6); }
+  .ck-bar__val { font-family: var(--mono); font-size: 12px; }
+  .ck-bar__track { grid-column: 1 / -1; height: 4px; background: var(--void-3); overflow: hidden; margin-top: 6px; }
+  .ck-bar__fill { height: 100%; transition: width 600ms ease-out; }
+  .ck-rec { background: var(--void-2); border: 1px solid var(--grain-1); padding: 24px; margin-top: 32px; }
+  .ck-rec__l { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--signal); margin-bottom: 12px; }
+  .ck-rec__t { font-family: var(--sans); font-size: 18px; line-height: 1.5; color: var(--grain-6); }
+  .ck-rec__t b { color: var(--paper); font-weight: 600; }
+  .ck-cta { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .ck-honest { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--grain-4); margin-top: 26px; max-width: 54ch; }
+  .ck-again { font-family: var(--mono); font-size: 12px; color: var(--grain-4); background: none; border: none; cursor: pointer; margin-top: 24px; text-decoration: underline; letter-spacing: 0.06em; }
+  .ck-again:hover { color: var(--signal); }
+
+  @media (max-width: 480px) {
+    .ck-opts { grid-template-columns: repeat(2, 1fr); }
+    .dg-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="ck-wrap">
+  <header class="ck-head">
+    <a class="ck-brand" href="index.html" aria-label="Digital Gravity — início">
+      <img src="assets/logo-mark.svg" width="24" height="24" alt="" aria-hidden="true">
+      <span class="ck-brand__word">DIGITAL GRAVITY</span>
+    </a>
+    <a class="ck-head__link" href="mailto:contato@digitalgravity.tech" data-ga-cta="contact" data-ga-location="checklist_header">Contato</a>
+  </header>
+
+  <div id="ck-quiz">
+    <div class="ck-intro">
+      <div class="ck-kicker">Checklist de confiabilidade</div>
+      <h1 class="ck-h1">Seu sistema de IA está pronto para produção?</h1>
+      <p class="ck-lede">Oito perguntas, dois minutos. Responda <b>honestamente</b> — o valor do diagnóstico depende disso. No fim, você vê onde seu sistema está entre a demo e a produção, e onde estão as lacunas.</p>
+    </div>
+    <div id="ck-questions"></div>
+    <div class="ck-runbar">
+      <button class="dg-btn dg-btn--primary ck-run" id="ck-run" disabled>Ver meu diagnóstico</button>
+      <div class="ck-prog" id="ck-prog">0 / 8 respondidas</div>
+    </div>
+  </div>
+
+  <div id="ck-result">
+    <div class="ck-kicker">Diagnóstico</div>
+    <div class="ck-band" id="ck-band"></div>
+    <div class="ck-scoreline" id="ck-scoreline"></div>
+    <div class="ck-verdict" id="ck-verdict"></div>
+    <div class="ck-bars" id="ck-bars"></div>
+    <div class="ck-rec">
+      <div class="ck-rec__l">Por onde começar</div>
+      <div class="ck-rec__t" id="ck-rec"></div>
+    </div>
+    <div class="ck-cta" id="ck-ctaBox">
+      <a class="dg-btn dg-btn--primary" href="mailto:contato@digitalgravity.tech?subject=Diagn%C3%B3stico%20de%20confiabilidade" data-ga-cta="contact" data-ga-location="checklist_result">Fale com a gente sobre o seu resultado</a>
+    </div>
+    <p class="ck-honest" id="ck-honest"></p>
+    <button class="ck-again" onclick="location.reload()">↻ Refazer</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var Q = [
+    { dim: "Avaliação (eval)", stage: "build", t: "Você consegue medir se uma mudança de prompt ou modelo melhorou ou piorou o sistema, antes de subir pra produção?" },
+    { dim: "Observabilidade", stage: "build", t: "Em produção, você consegue reconstruir o que o sistema fez numa requisição específica — entrada, decisão, saída — depois do fato?" },
+    { dim: "Falha silenciosa", stage: "build", t: "Se o sistema começar a alucinar ou degradar amanhã, você descobre por monitoramento — ou por reclamação de cliente?" },
+    { dim: "Não-determinismo", stage: "build", t: "Você tem controle sobre a variação das respostas, ou o mesmo input pode dar resultados imprevisíveis sem você saber por quê?" },
+    { dim: "Custo e latência", stage: "build", t: "Você monitora custo de token e latência, com alerta quando saem do esperado?" },
+    { dim: "Guardrails", stage: "build", t: "Existem validações e fallbacks entre a saída do modelo e o usuário, ou a resposta do modelo vai direto?" },
+    { dim: "Critério de sucesso", stage: "shape", t: "Existe um critério de sucesso mensurável definido para esse sistema, ou ele foi construído no feeling?" },
+    { dim: "Sustentabilidade", stage: "operate", t: "Se a pessoa que construiu isso sair amanhã, seu time mantém o sistema?" }
+  ];
+  var LABELS = ["Não", "Em parte", "Bom", "Sólido"];
+  var ans = new Array(Q.length).fill(null);
+  var started = false;
+
+  function ga(name, params) { if (typeof window.gtag === 'function') window.gtag('event', name, params || {}); }
+
+  var qc = document.getElementById('ck-questions');
+  Q.forEach(function (q, i) {
+    var d = document.createElement('div');
+    d.className = 'ck-q';
+    d.innerHTML = '<div class="ck-q__dim">' + String(i + 1).padStart(2, '0') + ' · ' + q.dim + '</div>' +
+      '<div class="ck-q__text">' + q.t + '</div>' +
+      '<div class="ck-opts" data-i="' + i + '">' +
+      LABELS.map(function (l, j) { return '<div class="ck-opt" data-v="' + j + '">' + l + '</div>'; }).join('') +
+      '</div>';
+    qc.appendChild(d);
+  });
+
+  document.querySelectorAll('.ck-opts').forEach(function (g) {
+    var i = +g.dataset.i;
+    g.querySelectorAll('.ck-opt').forEach(function (o) {
+      o.addEventListener('click', function () {
+        g.querySelectorAll('.ck-opt').forEach(function (x) { x.classList.remove('on'); });
+        o.classList.add('on');
+        ans[i] = +o.dataset.v;
+        if (!started) { started = true; ga('checklist_start'); }
+        var done = ans.filter(function (a) { return a !== null; }).length;
+        document.getElementById('ck-prog').textContent = done + ' / ' + Q.length + ' respondidas';
+        document.getElementById('ck-run').disabled = done < Q.length;
+      });
+    });
+  });
+
+  function color(v) { return v >= 2.5 ? 'var(--signal)' : v >= 1.5 ? 'var(--warning)' : 'var(--danger)'; }
+
+  document.getElementById('ck-run').addEventListener('click', function () {
+    var sum = ans.reduce(function (a, b) { return a + b; }, 0);
+    var max = Q.length * 3;
+    var pct = Math.round(sum / max * 100);
+    var band, bandColor, verdict;
+    if (pct < 40) {
+      band = "Demo-grade"; bandColor = "var(--danger)";
+      verdict = "Impressiona na demo, frágil em produção. As bases de confiabilidade ainda não existem — é o estágio em que a maioria dos projetos quebra sem aviso.";
+    } else if (pct < 72) {
+      band = "Em transição"; bandColor = "var(--warning)";
+      verdict = "Partes maduras, lacunas críticas. Tem fundação, mas há furos por onde a confiabilidade vaza em produção. É o ponto em que vale endereçar as lacunas antes de escalar.";
+    } else {
+      band = "Production-grade"; bandColor = "var(--signal)";
+      verdict = "Bem instrumentado. Você trata IA como sistema de engenharia, não como experimento — está à frente da maioria.";
+    }
+
+    document.getElementById('ck-band').textContent = band;
+    document.getElementById('ck-band').style.color = bandColor;
+    document.getElementById('ck-scoreline').textContent = sum + ' / ' + max + ' · ' + pct + '% de prontidão';
+    document.getElementById('ck-verdict').textContent = verdict;
+
+    document.getElementById('ck-bars').innerHTML = Q.map(function (q, i) {
+      var v = ans[i];
+      return '<div class="ck-bar"><span class="ck-bar__lab">' + q.dim + '</span>' +
+        '<span class="ck-bar__val" style="color:' + color(v) + '">' + LABELS[v] + '</span>' +
+        '<div class="ck-bar__track"><div class="ck-bar__fill" style="width:' + (v / 3 * 100) + '%;background:' + color(v) + '"></div></div></div>';
+    }).join('');
+
+    var shapeQ = ans[6], operateQ = ans[7];
+    var buildGaps = [0, 1, 2, 3, 4, 5].filter(function (i) { return ans[i] <= 1; });
+    var rec;
+    if (shapeQ <= 1) {
+      rec = "<b>Comece pelo Shape.</b> Sem critério de sucesso mensurável, endurecer o sistema é otimizar no escuro — você não sabe pra onde. Definir o problema e o outcome como engenharia vem antes.";
+    } else if (buildGaps.length) {
+      rec = "<b>Seu foco é Build / Harden.</b> As lacunas estão na engenharia de confiabilidade — eval, observabilidade, controle do não-determinismo. É o que separa a demo da produção.";
+    } else if (operateQ <= 1) {
+      rec = "<b>Pense em Operate / Transfer.</b> O sistema funciona, mas depende demais de poucas pessoas. Sustentabilidade e transferência de capacidade são o próximo risco a tratar.";
+    } else {
+      rec = "<b>Honestamente, talvez você não precise da gente agora</b> — e isso é uma boa notícia. Seu sistema está bem instrumentado. Se um dia a confiabilidade apertar ao escalar, a gente está aqui.";
+    }
+    document.getElementById('ck-rec').innerHTML = rec;
+
+    if (pct >= 72) {
+      document.getElementById('ck-ctaBox').innerHTML = '<a class="dg-btn dg-btn--primary" href="mailto:contato@digitalgravity.tech?subject=Diagn%C3%B3stico%20de%20confiabilidade" data-ga-cta="contact" data-ga-location="checklist_result">Fale com a gente assim mesmo</a>';
+      document.getElementById('ck-honest').textContent = "Sem upsell forçado: o diagnóstico é seu, de graça, conversa ou não.";
+    } else {
+      document.getElementById('ck-honest').textContent = "Este checklist é um diagnóstico de superfície. O Reliability Assessment completo entra no detalhe — mas o que você viu aqui já é seu.";
+    }
+
+    ga('checklist_complete', { score_pct: pct, band: band, transport_type: 'beacon' });
+
+    document.getElementById('ck-quiz').style.display = 'none';
+    document.getElementById('ck-result').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Delegated GA tracking for CTAs (consistent with index.html scheme)
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-ga-cta]');
+    if (!el || typeof window.gtag !== 'function') return;
+    window.gtag('event', 'cta_click', {
+      cta_type: el.getAttribute('data-ga-cta'),
+      cta_location: el.getAttribute('data-ga-location') || 'unknown',
+      link_url: el.getAttribute('href') || '(inert)',
+      transport_type: 'beacon'
+    });
+  }, { capture: true });
+})();
+</script>
+</body>
+</html>
