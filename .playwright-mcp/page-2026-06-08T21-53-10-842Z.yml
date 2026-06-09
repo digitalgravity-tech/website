@@ -1,0 +1,88 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - link "Digital Gravity — início" [ref=e3] [cursor=pointer]:
+      - /url: "#topo"
+      - img [ref=e4]
+      - generic [ref=e5]: DIGITAL GRAVITY
+    - generic [ref=e6]:
+      - link "Problema" [ref=e7] [cursor=pointer]:
+        - /url: "#problema"
+      - link "Jornada" [ref=e8] [cursor=pointer]:
+        - /url: "#jornada"
+      - link "Postura" [ref=e9] [cursor=pointer]:
+        - /url: "#postura"
+      - link "Contato" [ref=e10] [cursor=pointer]:
+        - /url: "#contato"
+  - main [ref=e11]:
+    - generic [ref=e14]:
+      - generic [ref=e15]: — ENGENHARIA PÓS-IA
+      - heading "Transformamos IA experimental em sistema operacionalmente confiável." [level=1] [ref=e16]
+      - paragraph [ref=e17]: Do problema à produção. E deixamos seu time capaz de manter o que construímos.
+      - generic [ref=e18]:
+        - button "Rode nosso checklist de confiabilidade" [ref=e19] [cursor=pointer]
+        - button "Fale com a gente →" [ref=e20] [cursor=pointer]
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: / 01
+        - generic [ref=e25]: O PROBLEMA
+      - generic [ref=e26]:
+        - heading "IA que brilha na demo e morre em produção." [level=2] [ref=e27]:
+          - text: IA que brilha na demo
+          - text: e morre em produção.
+        - generic [ref=e28]:
+          - paragraph [ref=e29]: "O problema raramente é o modelo — é a ausência de engenharia em volta dele: sem eval, sem observabilidade, sem controle do não-determinismo."
+          - blockquote [ref=e30]:
+            - paragraph [ref=e31]: A maioria dos projetos de IA não falha por falta de inteligência.
+            - paragraph [ref=e32]: Falha por falta de engenharia.
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - generic [ref=e36]: / 02
+        - generic [ref=e37]: O QUE FAZEMOS
+      - heading "A jornada inteira — projeto novo ou existente." [level=2] [ref=e38]
+      - generic [ref=e39]:
+        - article [ref=e40]:
+          - generic [ref=e41]: "01"
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - heading "Shape" [level=3] [ref=e44]
+              - text: ANTES DO CÓDIGO
+            - paragraph [ref=e45]: Definir problema, outcome e critério de sucesso como engenharia — antes da primeira linha de código.
+        - article [ref=e46]:
+          - generic [ref=e47]: "02"
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - heading "Build / Harden" [level=3] [ref=e50]
+              - text: DEMO → PRODUÇÃO
+            - paragraph [ref=e51]: "Eval, observabilidade, controle do não-determinismo: o que transforma a demo em produção confiável."
+        - article [ref=e52]:
+          - generic [ref=e53]: "03"
+          - generic [ref=e54]:
+            - generic [ref=e55]:
+              - heading "Operate / Transfer" [level=3] [ref=e56]
+              - text: VOCÊ FICA DONO
+            - paragraph [ref=e57]: Operação assistida e transferência de capacidade. Você fica dono do que construímos.
+    - generic [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]: / 03
+        - generic [ref=e62]: A POSTURA
+      - paragraph [ref=e64]: Não vendemos estratégia de IA em PDF nem mais um framework. Fazemos engenharia — e somos honestos sobre seus limites. Rigor onde há base sólida, humildade onde há fronteira. O que não dominamos, não fingimos dominar.
+    - generic [ref=e66]:
+      - heading "Seu projeto de IA está pronto para produção?" [level=2] [ref=e67]
+      - generic [ref=e68]:
+        - button "Rode nosso checklist de confiabilidade" [ref=e69] [cursor=pointer]
+        - button "Fale com a gente →" [ref=e70] [cursor=pointer]
+  - contentinfo [ref=e71]:
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - img [ref=e75]
+          - generic [ref=e76]: DIGITAL GRAVITY
+          - generic [ref=e77]: ENGENHARIA PÓS-IA
+        - generic [ref=e78]:
+          - link "contato@digitalgravity.tech" [ref=e79] [cursor=pointer]:
+            - /url: mailto:contato@digitalgravity.tech
+          - link "LinkedIn ↗" [ref=e80] [cursor=pointer]:
+            - /url: https://linkedin.com/company/digitalgravity-tech
+      - generic [ref=e81]:
+        - generic [ref=e82]: © 2026 Digital Gravity
+        - generic [ref=e83]: Solidez no conhecido. Humildade no desconhecido.

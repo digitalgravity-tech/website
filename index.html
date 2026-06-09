@@ -215,7 +215,7 @@
     <a class="dg-nav__link" href="#problema">Problema</a>
     <a class="dg-nav__link" href="#jornada">Jornada</a>
     <a class="dg-nav__link" href="#postura">Postura</a>
-    <a class="dg-nav__link dg-nav__link--cta" href="#contato">Contato</a>
+    <a class="dg-nav__link dg-nav__link--cta" href="#contato" data-ga-cta="contact" data-ga-location="nav">Contato</a>
   </div>
 </nav>
 
@@ -235,8 +235,8 @@
           Do problema à produção. E deixamos seu time capaz de manter o que construímos.
         </p>
         <div class="dg-hero__cta" data-reveal>
-          <a class="dg-btn dg-btn--primary" role="button">Rode nosso checklist de confiabilidade</a>
-          <a class="dg-btn dg-btn--secondary" role="button" href="#contato">Fale com a gente →</a>
+          <a class="dg-btn dg-btn--primary" role="button" data-ga-cta="checklist" data-ga-location="hero">Rode nosso checklist de confiabilidade</a>
+          <a class="dg-btn dg-btn--secondary" role="button" href="#contato" data-ga-cta="contact" data-ga-location="hero">Fale com a gente →</a>
         </div>
       </div>
     </div>
@@ -336,8 +336,8 @@
         Seu projeto de IA está <span class="dg-accent">pronto para produção?</span>
       </h2>
       <div class="dg-hero__cta dg-closing__cta" data-reveal>
-        <a class="dg-btn dg-btn--primary" role="button">Rode nosso checklist de confiabilidade</a>
-        <a class="dg-btn dg-btn--secondary" role="button" href="mailto:contato@digitalgravity.tech">Fale com a gente →</a>
+        <a class="dg-btn dg-btn--primary" role="button" data-ga-cta="checklist" data-ga-location="closing">Rode nosso checklist de confiabilidade</a>
+        <a class="dg-btn dg-btn--secondary" role="button" href="mailto:contato@digitalgravity.tech" data-ga-cta="contact" data-ga-location="closing">Fale com a gente →</a>
       </div>
     </div>
   </section>
@@ -353,8 +353,8 @@
         <span class="dg-footer__tag">ENGENHARIA PÓS-IA</span>
       </div>
       <div class="dg-footer__links">
-        <a href="mailto:contato@digitalgravity.tech">contato@digitalgravity.tech</a>
-        <a href="https://linkedin.com/company/digitalgravity-tech" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="mailto:contato@digitalgravity.tech" data-ga-cta="email" data-ga-location="footer">contato@digitalgravity.tech</a>
+        <a href="https://linkedin.com/company/digitalgravity-tech" target="_blank" rel="noopener" data-ga-cta="linkedin" data-ga-location="footer">LinkedIn ↗</a>
       </div>
     </div>
     <div class="dg-footer__base">
@@ -441,6 +441,21 @@
     draw();
   }
   document.querySelectorAll('.dg-chladni').forEach(startChladni);
+
+  // ── GA4 conversion events on CTAs ──────────────────────────
+  // Delegated click handler: any element carrying data-ga-cta emits a
+  // `cta_click` event with the CTA type and its on-page location. Safe
+  // no-op if gtag isn't loaded (e.g. blocked by an ad/tracking blocker).
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-ga-cta]');
+    if (!el || typeof window.gtag !== 'function') return;
+    window.gtag('event', 'cta_click', {
+      cta_type: el.getAttribute('data-ga-cta'),
+      cta_location: el.getAttribute('data-ga-location') || 'unknown',
+      link_url: el.getAttribute('href') || '(inert)',
+      transport_type: 'beacon'
+    });
+  }, { capture: true });
 })();
 </script>
 </body>
