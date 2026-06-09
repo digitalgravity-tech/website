@@ -121,9 +121,22 @@
   .ck-again { font-family: var(--mono); font-size: 12px; color: var(--grain-4); background: none; border: none; cursor: pointer; margin-top: 24px; text-decoration: underline; letter-spacing: 0.06em; }
   .ck-again:hover { color: var(--signal); }
 
+  /* ── lead form ─────────────────────────────────────────── */
+  .dg-form { display: flex; gap: 12px; flex-wrap: wrap; width: 100%; }
+  .dg-input { flex: 1 1 240px; min-width: 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em;
+              padding: 14px 16px; background: var(--void-3); border: 1px solid var(--grain-2); color: var(--paper);
+              transition: border-color var(--t-fast); }
+  .dg-input::placeholder { color: var(--grain-4); }
+  .dg-input:focus { outline: none; border-color: var(--signal); }
+  .dg-form .dg-btn { flex: 0 0 auto; }
+  .dg-form__note { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--grain-4); margin: 12px 0 0; min-height: 1em; }
+  .dg-form__note.is-ok { color: var(--signal); }
+  .dg-form__note.is-err { color: var(--warning); }
+
   @media (max-width: 480px) {
     .ck-opts { grid-template-columns: repeat(2, 1fr); }
     .dg-btn { width: 100%; }
+    .dg-form { flex-direction: column; }
   }
 </style>
 </head>
@@ -161,7 +174,15 @@
       <div class="ck-rec__t" id="ck-rec"></div>
     </div>
     <div class="ck-cta" id="ck-ctaBox">
-      <a class="dg-btn dg-btn--primary" href="mailto:contato@digitalgravity.tech?subject=Diagn%C3%B3stico%20de%20confiabilidade" data-ga-cta="contact" data-ga-location="checklist_result">Fale com a gente sobre o seu resultado</a>
+      <form class="dg-form" data-lead-form data-source="checklist_result" novalidate>
+        <input type="email" name="email" class="dg-input" placeholder="seu@email.com" required autocomplete="email" aria-label="Seu e-mail">
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
+        <input type="hidden" name="_subject" value="Diagnóstico de confiabilidade — novo contato">
+        <input type="hidden" name="band" id="ck-f-band" value="">
+        <input type="hidden" name="score_pct" id="ck-f-score" value="">
+        <button type="submit" class="dg-btn dg-btn--primary" id="ck-f-submit">Fale com a gente sobre o seu resultado</button>
+      </form>
+      <p class="dg-form__note" data-form-note aria-live="polite">Mandamos uma leitura do seu diagnóstico e os próximos passos.</p>
     </div>
     <p class="ck-honest" id="ck-honest"></p>
     <button class="ck-again" onclick="location.reload()">↻ Refazer</button>
@@ -258,8 +279,10 @@
     }
     document.getElementById('ck-rec').innerHTML = rec;
 
+    document.getElementById('ck-f-band').value = band;
+    document.getElementById('ck-f-score').value = pct;
     if (pct >= 72) {
-      document.getElementById('ck-ctaBox').innerHTML = '<a class="dg-btn dg-btn--primary" href="mailto:contato@digitalgravity.tech?subject=Diagn%C3%B3stico%20de%20confiabilidade" data-ga-cta="contact" data-ga-location="checklist_result">Fale com a gente assim mesmo</a>';
+      document.getElementById('ck-f-submit').textContent = 'Fale com a gente assim mesmo';
       document.getElementById('ck-honest').textContent = "Sem upsell forçado: o diagnóstico é seu, de graça, conversa ou não.";
     } else {
       document.getElementById('ck-honest').textContent = "Este checklist é um diagnóstico de superfície. O Reliability Assessment completo entra no detalhe — mas o que você viu aqui já é seu.";
@@ -285,5 +308,6 @@
   }, { capture: true });
 })();
 </script>
+<script src="lead-form.js"></script>
 </body>
 </html>
