@@ -178,8 +178,11 @@
         <input type="email" name="email" class="dg-input" placeholder="seu@email.com" required autocomplete="email" aria-label="Seu e-mail">
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
         <input type="hidden" name="_subject" value="Diagnóstico de confiabilidade — novo contato">
+        <input type="hidden" name="type" value="checklist_lead">
+        <input type="hidden" name="checklist_id" id="ck-f-cid" value="">
         <input type="hidden" name="band" id="ck-f-band" value="">
         <input type="hidden" name="score_pct" id="ck-f-score" value="">
+        <input type="hidden" name="answers" id="ck-f-answers" value="">
         <button type="submit" class="dg-btn dg-btn--primary" id="ck-f-submit">Fale com a gente sobre o seu resultado</button>
       </form>
       <p class="dg-form__note" data-form-note aria-live="polite">Mandamos uma leitura do seu diagnóstico e os próximos passos.</p>
@@ -279,8 +282,28 @@
     }
     document.getElementById('ck-rec').innerHTML = rec;
 
+    var answersStr = Q.map(function (q, i) { return q.dim + ': ' + LABELS[ans[i]]; }).join(' | ');
+    var cid = (window.DGLead ? window.DGLead.newId() : '');
+    document.getElementById('ck-f-cid').value = cid;
     document.getElementById('ck-f-band').value = band;
     document.getElementById('ck-f-score').value = pct;
+    document.getElementById('ck-f-answers').value = answersStr;
+
+    // Log the result now (anonymous, with user agent + server-side IP), even
+    // before the user gives an email. The later email submission carries the
+    // same checklist_id so the two Formspree records correlate.
+    if (window.DGLead) {
+      window.DGLead.log({
+        type: 'checklist_result',
+        checklist_id: cid,
+        source: 'checklist_auto',
+        band: band,
+        score_pct: pct,
+        answers: answersStr,
+        _subject: 'Checklist concluído — ' + band + ' (' + pct + '%)'
+      });
+    }
+
     if (pct >= 72) {
       document.getElementById('ck-f-submit').textContent = 'Fale com a gente assim mesmo';
       document.getElementById('ck-honest').textContent = "Sem upsell forçado: o diagnóstico é seu, de graça, conversa ou não.";
